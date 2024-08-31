@@ -31,7 +31,7 @@ async def change_status_handler(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text(text, reply_markup=back_btn('start'), parse_mode="HTML")
 
     elif user.status == 2:
-        text = 'ℹ️ Введите количество минут, сколько показывает по навигатору до РЦ'
+        text = 'ℹ️ Введите сколько времени показывает по навигатору до РЦ'
         await state.set_state(ChangeStatus.input_time_to_base)
         await state.update_data(past_msg_id=callback.message.message_id)
         await callback.message.edit_text(text, reply_markup=back_btn('start'))
@@ -41,17 +41,12 @@ async def change_status_handler(callback: CallbackQuery, state: FSMContext):
 async def input_time_to_base_handler(message: Message, state: FSMContext):
     await message.delete()
     data = await state.get_data()
-    if not message.text.isdigit():
-        return await message.bot.edit_message_text('❌ Можно вводить только цифры\n'
-                                                   'ℹ️ Введите количество минут, сколько показывает по навигатору до РЦ',
-                                                   reply_markup=back_btn('start'), chat_id=message.chat.id,
-                                                   message_id=data['past_msg_id'])
 
     user: Users = Users.get_or_none(Users.user_id == message.from_user.id)
     user.status = 0
     user.save()
     await state.clear()
-    text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> будет на РЦ через <i>{message.text} минут</i>'
+    text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> будет на РЦ через <i>{message.text}</i>'
 
     await message.bot.send_message(os.getenv('CHANNEL_ID'), text, reply_markup=write_btn(user.user_id),
                                    parse_mode="HTML")
