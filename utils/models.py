@@ -10,6 +10,8 @@ class Users(Model):
     fullname = TextField()
     number_car = TextField()
     status = IntegerField(default=0)
+    points = IntegerField(default=0)
+    points_done = IntegerField(default=0)
 
     class Meta:
         database = db

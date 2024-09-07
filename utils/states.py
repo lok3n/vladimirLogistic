@@ -7,4 +7,5 @@ class Registration(StatesGroup):
 
 
 class ChangeStatus(StatesGroup):
+    input_points = State()
     input_time_to_base = State()
