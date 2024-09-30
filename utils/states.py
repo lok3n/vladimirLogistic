@@ -7,5 +7,7 @@ class Registration(StatesGroup):
 
 
 class ChangeStatus(StatesGroup):
+    send_location_start = State()
     input_points = State()
     input_time_to_base = State()
+    send_location_cancel = State()

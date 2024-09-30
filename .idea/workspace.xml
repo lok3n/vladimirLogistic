@@ -5,10 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e0dcd67f-aa30-4f2f-92d8-66e016417d96" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/functions/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/report_drivers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/handlers/cancel_race.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/handlers/menu.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/change_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/change_status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/registration.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/registration.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/start.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/start.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/keyboards.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/keyboards.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/states.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/states.py" afterDir="false" />
@@ -40,16 +48,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.main.executor": "Run",
-    "Python.start.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/vicke/PycharmProjects/vladimirLogisticBot/main.py"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.start.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/vicke/PycharmProjects/vladimirLogisticBot/main.py&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\vicke\PycharmProjects\vladimirLogisticBot" />
@@ -120,13 +128,22 @@
       <option name="project" value="LOCAL" />
       <updated>1725085061436</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Внесены правки, добавлены точки разгрузки">
+      <option name="closed" value="true" />
+      <created>1725694834727</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1725694834727</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first vers" />
     <MESSAGE value="requirements.txt add" />
     <MESSAGE value="refactor minutes" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor minutes" />
+    <MESSAGE value="Внесены правки, добавлены точки разгрузки" />
+    <option name="LAST_COMMIT_MESSAGE" value="Внесены правки, добавлены точки разгрузки" />
   </component>
 </project>

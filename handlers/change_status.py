@@ -1,10 +1,12 @@
+import datetime
 import os
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from utils.models import Users
-from utils.keyboards import write_btn, back_btn, next_btn
+from utils.keyboards import write_btn, back_btn, next_btn, cancel_or_back, send_location
 from utils.states import ChangeStatus
+from handlers.start import start_handler
 
 change_status_router = Router()
 
@@ -13,49 +15,61 @@ change_status_router = Router()
 async def change_status_handler(callback: CallbackQuery, state: FSMContext):
     user: Users = Users.get_or_none(Users.user_id == callback.from_user.id)
     await state.clear()
+    notify_msg = None
 
-    if user.status == 0:
+    if not user.status:
         user.status = 1
-        user.save()
-        text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> ждёт погрузки'
-        await callback.bot.send_message(os.getenv('CHANNEL_ID'), text, reply_markup=write_btn(user.user_id),
-                                        parse_mode="HTML")
-        await callback.message.edit_text('✅ Вы сменили свой статус на <i>«Нахожусь на РЦ»</i>',
+        user.points_done = 0
+        user.points = 0
+        text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> вышел на смену'
+        notify_msg = await callback.bot.send_message(os.getenv('CHANNEL_ID'), text,
+                                                     reply_markup=write_btn(user.user_id),
+                                                     parse_mode="HTML")
+        user.notify_msg_id = notify_msg.message_id
+        await callback.message.edit_text(f'✅ Вы сменили свой статус на <i>«В пути на РЦ»</i>',
                                          reply_markup=next_btn('start'), parse_mode="HTML")
-
     elif user.status == 1:
+        await callback.message.delete()
+        await callback.message.answer(
+            'ℹ️ Отправьте Вашу геолокацию для подтверждения того, что Вы находитесь на РЦ',
+            reply_markup=send_location())
+        await state.set_state(ChangeStatus.send_location_start)
+    elif user.status == 2:
         text = 'ℹ️ Введите количество точек выгрузки'
         await state.set_state(ChangeStatus.input_points)
         await state.update_data(past_msg_id=callback.message.message_id)
         await callback.message.edit_text(text, reply_markup=back_btn('start'))
 
-    if user.status == 2:
-        user.status = 3
+    if user.status == 3:
+        user.status = 4
         user.points_done += 1
-        user.save()
         text = (f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> выгружается на '
                 f'<i>{user.points_done}</i> точке, ещё <i>{user.points - user.points_done}</i> точек')
-        await callback.bot.send_message(os.getenv('CHANNEL_ID'), text, reply_markup=write_btn(user.user_id),
-                                        parse_mode="HTML")
+        notify_msg = await callback.bot.send_message(os.getenv('CHANNEL_ID'), text,
+                                                     reply_markup=write_btn(user.user_id),
+                                                     parse_mode="HTML")
         await callback.message.edit_text(f'✅ Вы сменили свой статус на <i>«Выгружаюсь»</i>\n📍 Текущая точка: '
                                          f'<i>{user.points_done}</i>, осталось <i>{user.points - user.points_done}</i>'
                                          f' точек',
                                          reply_markup=next_btn('start'), parse_mode="HTML")
 
-    elif user.status == 3:
+    elif user.status == 4:
         if user.points_done >= user.points:
-            text = 'ℹ️ Введите сколько времени показывает по навигатору до РЦ'
+            text = 'ℹ️ Введите сколько времени показывает по навигатору до РЦ, либо завершите смену'
             await state.set_state(ChangeStatus.input_time_to_base)
             await state.update_data(past_msg_id=callback.message.message_id)
-            await callback.message.edit_text(text, reply_markup=back_btn('start'))
+            await callback.message.edit_text(text, reply_markup=cancel_or_back('start'))
         else:
-            user.status = 2
-            user.save()
+            user.status = 3
             text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> продолжает маршрут'
-            await callback.bot.send_message(os.getenv('CHANNEL_ID'), text, reply_markup=write_btn(user.user_id),
-                                            parse_mode="HTML")
+            notify_msg = await callback.bot.send_message(os.getenv('CHANNEL_ID'), text,
+                                                         reply_markup=write_btn(user.user_id),
+                                                         parse_mode="HTML")
             await callback.message.edit_text(f'✅ Вы сменили свой статус на <i>«В рейсе»</i>, езжайте на следующую'
                                              f' точку', reply_markup=next_btn('start'), parse_mode="HTML")
+    if notify_msg is not None:
+        user.notify_msg_id = notify_msg.message_id
+    user.save()
 
 
 @change_status_router.message(ChangeStatus.input_points)
@@ -69,9 +83,8 @@ async def input_points_handler(message: Message, state: FSMContext):
                                                    message_id=data['past_msg_id'], parse_mode="HTML")
 
     user: Users = Users.get_or_none(Users.user_id == message.from_user.id)
-    user.status = 2
+    user.status = 3
     user.points = int(message.text)
-    user.save()
     text = (f'✅ Вы сменили свой статус на <i>«В рейсе»</i>\n'
             f'📍 Количество точек выгрузки: <i>{message.text} точек</i>\n\n'
             f'👍 Желаем вам приятной дороги\n'
@@ -80,8 +93,11 @@ async def input_points_handler(message: Message, state: FSMContext):
     notify_text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> загрузился на <i>{message.text}</i> точек'
     await state.clear()
 
-    await message.bot.send_message(os.getenv('CHANNEL_ID'), notify_text, reply_markup=write_btn(user.user_id),
-                                   parse_mode="HTML")
+    notify_msg = await message.bot.send_message(os.getenv('CHANNEL_ID'), notify_text,
+                                                reply_markup=write_btn(user.user_id),
+                                                parse_mode="HTML")
+    user.notify_msg_id = notify_msg.message_id
+    user.save()
     await message.bot.edit_message_text(text,
                                         reply_markup=next_btn('start'), chat_id=message.chat.id,
                                         message_id=data['past_msg_id'], parse_mode="HTML")
@@ -93,15 +109,45 @@ async def input_time_to_base_handler(message: Message, state: FSMContext):
     data = await state.get_data()
 
     user: Users = Users.get_or_none(Users.user_id == message.from_user.id)
-    user.status = 0
+    user.status = 1
     user.points = 0
     user.points_done = 0
-    user.save()
     await state.clear()
     text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> будет на РЦ через <i>{message.text}</i>'
 
-    await message.bot.send_message(os.getenv('CHANNEL_ID'), text, reply_markup=write_btn(user.user_id),
-                                   parse_mode="HTML")
+    notify_msg = await message.bot.send_message(os.getenv('CHANNEL_ID'), text, reply_markup=write_btn(user.user_id),
+                                                parse_mode="HTML")
+    user.notify_msg_id = notify_msg.message_id
+    user.save()
     await message.bot.edit_message_text(
         f'✅ Вы сменили свой статус на <i>«В пути на РЦ»</i>, будете через <i>{message.text} минут</i>',
         reply_markup=next_btn('start'), chat_id=message.chat.id, message_id=data['past_msg_id'], parse_mode="HTML")
+
+
+@change_status_router.message(ChangeStatus.send_location_start, F.location)
+async def handle_location(message: Message, state: FSMContext):
+    center = (55.695708, 37.428913)
+    check = ((message.location.latitude - center[0]) ** 2 + (message.location.longitude - center[1]) ** 2) < 0.003 ** 2
+    if check:
+        user: Users = Users.get_or_none(Users.user_id == message.from_user.id)
+        user.status = 2
+        text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> ждёт погрузки'
+        notify_msg = await message.bot.send_message(os.getenv('CHANNEL_ID'), text,
+                                                    reply_markup=write_btn(user.user_id),
+                                                    parse_mode="HTML")
+        await message.answer('✅ Вы сменили свой статус на <i>«Нахожусь на РЦ»</i>',
+                             reply_markup=next_btn('start'), parse_mode="HTML")
+        user.notify_msg_id = notify_msg.message_id
+        user.save()
+    else:
+        await state.clear()
+        await message.answer('❌ Вы находитесь не на РЦ, смените статус когда приедете на РЦ',
+                             reply_markup=next_btn('start'))
+
+
+@change_status_router.message(F.text, ChangeStatus.send_location_cancel)
+async def handle_message(message: Message, state: FSMContext):
+    if message.text != 'Назад':
+        await message.answer('Ошибка! Отправьте локацию или нажмите назад')
+    else:
+        await start_handler(message, state)

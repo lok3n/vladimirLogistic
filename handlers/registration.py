@@ -1,7 +1,7 @@
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
-from utils.keyboards import back_btn
+from utils.keyboards import back_btn, next_btn
 from utils.states import Registration
 from utils.models import Users
 
@@ -11,7 +11,8 @@ registration_router = Router()
 @registration_router.callback_query(F.data == 'registration')
 async def registration_handler(callback: CallbackQuery, state: FSMContext):
     await state.clear()
-    await callback.message.edit_text('🪪 Введите свою Имя Фамилию', reply_markup=back_btn('start'))
+    await callback.message.edit_text('🪪 Введите свою Имя Фамилию и отправьте сообщением',
+                                     reply_markup=back_btn('start'))
     await state.set_state(Registration.input_name)
     await state.update_data(past_msg_id=callback.message.message_id)
 
@@ -42,5 +43,5 @@ async def input_carid_handler(message: Message, state: FSMContext):
     await state.clear()
     await message.bot.edit_message_text(f'✅ Вы ввели <i>{message.text}</i>\n\n'
                                         f'✨ Теперь вы зарегистрированы в нашем боте, перейдите в главное меню',
-                                        reply_markup=back_btn('start'),
+                                        reply_markup=next_btn('start'),
                                         parse_mode="HTML", chat_id=message.chat.id, message_id=data['past_msg_id'])

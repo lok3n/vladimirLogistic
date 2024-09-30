@@ -1,4 +1,4 @@
-from peewee import SqliteDatabase, Model, TextField, IntegerField
+from peewee import SqliteDatabase, Model, TextField, IntegerField, DateTimeField
 
 db = SqliteDatabase('database.db')
 
@@ -9,9 +9,12 @@ class Users(Model):
     username = TextField()
     fullname = TextField()
     number_car = TextField()
-    status = IntegerField(default=0)
+    status = IntegerField(
+        default=0)  # 0 - не на смене, 1 - в пути на РЦ, 2 - на загрузке, 3 - развозит, 4 - разгружается на точке
     points = IntegerField(default=0)
     points_done = IntegerField(default=0)
+    datetime_cancel = DateTimeField(null=True, default=None)
+    notify_msg_id = IntegerField(default=0)
 
     class Meta:
         database = db
