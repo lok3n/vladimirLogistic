@@ -11,7 +11,7 @@ start_router = Router()
 
 
 @start_router.callback_query(F.data == 'start')
-@start_router.message(Command('start'))
+@start_router.message(Command('start'), F.chat.type == 'private')
 async def start_handler(event: Message | CallbackQuery, state: FSMContext):
     await state.clear()
     user = Users.get_or_none(Users.user_id == event.from_user.id)

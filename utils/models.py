@@ -18,3 +18,16 @@ class Users(Model):
 
     class Meta:
         database = db
+
+
+class Races(Model):
+    id = IntegerField(primary_key=True)
+    user_id = IntegerField()
+    fullname = TextField()
+    number_car = TextField()
+    datetime_start = DateTimeField()
+    points = IntegerField()
+    points_time = TextField(default='')
+
+    class Meta:
+        database = db

@@ -19,7 +19,7 @@ async def format_text(driver_status: int):
     if driver_status == 0:
         delta = datetime.timedelta(days=1)
         for user in Users.select().where(Users.status == 0):
-            if user.datetime_cancel + delta > datetime.datetime.now():
+            if user.datetime_cancel and user.datetime_cancel + delta > datetime.datetime.now():
                 users.append(user)
     elif driver_status:
         users: list[Users] = Users.select().where(Users.status == driver_status)

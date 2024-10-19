@@ -5,15 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e0dcd67f-aa30-4f2f-92d8-66e016417d96" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/functions/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/functions/report_drivers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/handlers/cancel_race.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/handlers/menu.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/functions/create_excel.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/handlers/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/functions/report_drivers.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/report_drivers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/change_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/change_status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/handlers/registration.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/registration.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/start.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/start.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
@@ -50,16 +48,21 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Python.create_excel.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.start.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/vicke/PycharmProjects/vladimirLogisticBot/main.py&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/vicke/PycharmProjects/userBotForDriverTaxi&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\vicke\PycharmProjects\vladimirLogisticBot" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\vicke\PycharmProjects\vladimirLogisticBot\functions" />
       <recent name="C:\Users\vicke\PycharmProjects\vladimirLogisticBot" />
     </key>
   </component>
@@ -136,7 +139,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725694834727</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Внесены правки, добавлена проверка на местонахождение водителя, добавлена сводка менеджерам">
+      <option name="closed" value="true" />
+      <created>1727671861143</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1727671861144</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -144,6 +155,7 @@
     <MESSAGE value="requirements.txt add" />
     <MESSAGE value="refactor minutes" />
     <MESSAGE value="Внесены правки, добавлены точки разгрузки" />
-    <option name="LAST_COMMIT_MESSAGE" value="Внесены правки, добавлены точки разгрузки" />
+    <MESSAGE value="Внесены правки, добавлена проверка на местонахождение водителя, добавлена сводка менеджерам" />
+    <option name="LAST_COMMIT_MESSAGE" value="Внесены правки, добавлена проверка на местонахождение водителя, добавлена сводка менеджерам" />
   </component>
 </project>

@@ -23,9 +23,12 @@ def change_status_kb(status) -> InlineKeyboardMarkup:
     return builder.adjust(1).as_markup()
 
 
-def cancel_or_back(callback: str) -> InlineKeyboardMarkup:
-    return (InlineKeyboardBuilder().button(text='🚩 Закончить смену', callback_data='cancel_race')
-            .button(text='↩️ Назад', callback_data=callback).adjust(1).as_markup())
+def cancel_or_continue() -> InlineKeyboardMarkup:
+    return (InlineKeyboardBuilder().
+            button(text='🚚 Еду на РЦ', callback_data='continue_race').
+            button(text='🚚 Построить маршрут до РЦ',
+                   url='https://yandex.ru/navi?whatshere%5Bpoint%5D=37.429608104937564%2C55.69606885085871&whatshere%5Bzoom%5D=16.501898&ll=37.42972409487407%2C55.69609284419613&z=16.501898').
+            button(text='🚩 Закончить смену', callback_data='cancel_race').adjust(1).as_markup())
 
 
 def next_btn(callback: str) -> InlineKeyboardMarkup:
@@ -58,6 +61,9 @@ def menu_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(text='Дежурные номера', callback_data='numbers')
     builder.button(text='Справочник', url='https://t.me/+KAhSU_pavW8zOWUy')
-    builder.button(text='Общий чат', url='https://t.me/+kVoHpwiKeDsyMWQy')
+    builder.button(text='Общий чат (наёмники)', url='https://t.me/+kVoHpwiKeDsyMWQy')
+    builder.button(text='Общий чат (собственный ТС)', url='https://t.me/+PS69_7ywbjg5YTVi')
+    builder.button(text='🚚 Построить маршрут до РЦ',
+                   url='https://yandex.ru/navi?whatshere%5Bpoint%5D=37.429608104937564%2C55.69606885085871&whatshere%5Bzoom%5D=16.501898&ll=37.42972409487407%2C55.69609284419613&z=16.501898')
     builder.button(text='↩️ Назад', callback_data='start')
     return builder.adjust(1).as_markup()

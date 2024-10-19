@@ -3,8 +3,8 @@ import os
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
-from utils.models import Users
-from utils.keyboards import write_btn, back_btn, next_btn, cancel_or_back, send_location
+from utils.models import Users, Races
+from utils.keyboards import write_btn, back_btn, next_btn, cancel_or_continue, send_location
 from utils.states import ChangeStatus
 from handlers.start import start_handler
 
@@ -55,10 +55,11 @@ async def change_status_handler(callback: CallbackQuery, state: FSMContext):
 
     elif user.status == 4:
         if user.points_done >= user.points:
-            text = 'ℹ️ Введите сколько времени показывает по навигатору до РЦ, либо завершите смену'
-            await state.set_state(ChangeStatus.input_time_to_base)
-            await state.update_data(past_msg_id=callback.message.message_id)
-            await callback.message.edit_text(text, reply_markup=cancel_or_back('start'))
+            text = '''✅ Вы завершили рейс!
+            
+1️⃣ Еду на второй рейс
+2️⃣ Завершай смену, если не едешь на РЦ'''
+            await callback.message.edit_text(text, reply_markup=cancel_or_continue())
         else:
             user.status = 3
             text = f'Водитель <i>{user.fullname}</i> с номером ТС <i>{user.number_car}</i> продолжает маршрут'
@@ -67,6 +68,11 @@ async def change_status_handler(callback: CallbackQuery, state: FSMContext):
                                                          parse_mode="HTML")
             await callback.message.edit_text(f'✅ Вы сменили свой статус на <i>«В рейсе»</i>, езжайте на следующую'
                                              f' точку', reply_markup=next_btn('start'), parse_mode="HTML")
+        race = Races.select().where(Races.user_id == int(callback.from_user.id)).order_by(-Races.id)[0]
+        points_time = race.points_time.split(';') if race.points_time != '' else []
+        points_time.append(str(datetime.datetime.now()))
+        race.points_time = ';'.join(points_time)
+        race.save()
     if notify_msg is not None:
         user.notify_msg_id = notify_msg.message_id
     user.save()
@@ -78,6 +84,11 @@ async def input_points_handler(message: Message, state: FSMContext):
     data = await state.get_data()
     if not message.text.isdigit():
         return await message.bot.edit_message_text('❌ Ошибка! Можно ввести только цифры\n'
+                                                   'ℹ️ Введите количество точек выгрузки',
+                                                   reply_markup=next_btn('start'), chat_id=message.chat.id,
+                                                   message_id=data['past_msg_id'], parse_mode="HTML")
+    elif int(message.text) > 15:
+        return await message.bot.edit_message_text('❌ Ошибка! Можно ввести максимум 15 точек\n'
                                                    'ℹ️ Введите количество точек выгрузки',
                                                    reply_markup=next_btn('start'), chat_id=message.chat.id,
                                                    message_id=data['past_msg_id'], parse_mode="HTML")
@@ -101,6 +112,11 @@ async def input_points_handler(message: Message, state: FSMContext):
     await message.bot.edit_message_text(text,
                                         reply_markup=next_btn('start'), chat_id=message.chat.id,
                                         message_id=data['past_msg_id'], parse_mode="HTML")
+    race = Races.create(user_id=message.from_user.id,
+                        datetime_start=datetime.datetime.now(),
+                        points=int(message.text),
+                        fullname=user.fullname,
+                        number_car=user.number_car)
 
 
 @change_status_router.message(ChangeStatus.input_time_to_base)
@@ -151,3 +167,11 @@ async def handle_message(message: Message, state: FSMContext):
         await message.answer('Ошибка! Отправьте локацию или нажмите назад')
     else:
         await start_handler(message, state)
+
+
+@change_status_router.callback_query(F.data == 'continue_race')
+async def continue_race(callback: CallbackQuery, state: FSMContext):
+    text = 'ℹ️ Введите сколько времени показывает по навигатору до РЦ, либо завершите смену'
+    await state.set_state(ChangeStatus.input_time_to_base)
+    await state.update_data(past_msg_id=callback.message.message_id)
+    await callback.message.edit_text(text, reply_markup=back_btn('change_status'))
